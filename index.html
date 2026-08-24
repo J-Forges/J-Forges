@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JF — Forged Through Struggle</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <a class="logo" href="#">JF<span>+</span></a>
+  <button class="cart-btn" onclick="toggleCart()">Bag (<span id="cartCount">0</span>)</button>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">JF FORGES</p>
+      <h1>FORGED<br>THROUGH<br><em>STRUGGLE.</em></h1>
+      <p class="hero-text">Streetwear for people building something from nothing.</p>
+      <a href="#shop" class="button">SHOP THE DROP</a>
+    </div>
+  </section>
+
+  <section id="shop" class="shop">
+    <div class="section-head">
+      <p class="eyebrow">THE FIRST DROP</p>
+      <h2>JF ESSENTIALS</h2>
+    </div>
+    <div class="products">
+      <article class="product">
+        <div class="product-image">JF<br><small>PRODUCT IMAGE</small></div>
+        <div class="product-info">
+          <div><h3>JF Signature Hoodie</h3><p>Heavy streetwear hoodie</p></div>
+          <strong>R699</strong>
+        </div>
+        <button class="add" onclick="addToCart('JF Signature Hoodie',699)">ADD TO BAG</button>
+      </article>
+
+      <article class="product">
+        <div class="product-image">JF<br><small>PRODUCT IMAGE</small></div>
+        <div class="product-info">
+          <div><h3>JF Core Tee</h3><p>Everyday heavyweight tee</p></div>
+          <strong>R399</strong>
+        </div>
+        <button class="add" onclick="addToCart('JF Core Tee',399)">ADD TO BAG</button>
+      </article>
+    </div>
+  </section>
+
+  <section class="story">
+    <p class="eyebrow">THE JF MINDSET</p>
+    <h2>START WITH NOTHING.<br>BUILD SOMETHING.</h2>
+    <p>JF is built around discipline, ambition and the decision to keep going when nobody is watching.</p>
+  </section>
+
+  <section class="contact">
+    <p class="eyebrow">STAY CONNECTED</p>
+    <h2>FOLLOW THE JOURNEY.</h2>
+    <p>Replace these links with your Instagram, TikTok and WhatsApp.</p>
+    <div class="socials">
+      <a href="#" target="_blank">Instagram</a>
+      <a href="#" target="_blank">TikTok</a>
+      <a href="#" target="_blank">WhatsApp</a>
+    </div>
+  </section>
+</main>
+
+<aside id="cart" class="cart">
+  <button class="close" onclick="toggleCart()">×</button>
+  <h2>Your Bag</h2>
+  <div id="cartItems"></div>
+  <div class="total">Total <strong id="cartTotal">R0</strong></div>
+  <button class="checkout" onclick="checkout()">CHECKOUT</button>
+  <p class="checkout-note">Connect this button to your South African payment provider before launching.</p>
+</aside>
+
+<footer>© 2026 JF FORGES. BUILT FROM NOTHING.</footer>
+<script src="script.js"></script>
+</body>
+</html>
