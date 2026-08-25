@@ -4,78 +4,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JF — MY FINAL BEGINNING</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif}
+header{display:flex;justify-content:space-between;padding:20px 30px;background:#000;position:sticky;top:0;z-index:20;border-bottom:1px solid #1a1a1a}
+.logo{color:#fff;text-decoration:none;font-weight:900;font-size:22px;letter-spacing:3px}
+.logo span{color:#ffd700}
+.cart-btn{background:transparent;border:1px solid #333;color:#fff;padding:10px 18px;cursor:pointer}
+.hero{min-height:92vh;background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('banner.jpg');background-size:cover;background-position:center;display:flex;align-items:center;padding:40px}
+.eyebrow{letter-spacing:4px;color:#ffd700;font-size:11px;margin-bottom:10px}
+.hero h1{font-size:58px;line-height:0.85}
+.hero h1 em{color:#ffd700;font-style:normal}
+.hero-text{color:#aaa;max-width:400px;margin:20px 0}
+.button{display:inline-block;padding:14px 28px;background:#ffd700;color:#000;text-decoration:none;font-weight:800;letter-spacing:2px}
+.shop{padding:70px 30px}.products{display:grid;gap:20px}
+.product{background:#141414;padding:18px;display:flex;flex-wrap:wrap;gap:15px;align-items:center;border:1px solid #222}
+.product-image{background:#1e1e1e;width:120px;height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900}
+.product-info{flex:1;display:flex;justify-content:space-between;min-width:200px}
+.add{background:#fff;color:#000;border:none;padding:12px 18px;font-weight:800;cursor:pointer}
+.cart{position:fixed;top:0;right:-100%;width:380px;max-width:90%;height:100vh;background:#0f0f0f;padding:30px;transition:0.3s;z-index:50}
+.cart.open{right:0}
+.close{background:transparent;border:none;color:#fff;font-size:30px;position:absolute;top:15px;right:20px;cursor:pointer}
+.total{margin:20px 0;display:flex;justify-content:space-between;border-top:1px solid #222;padding-top:15px}
+.checkout{width:100%;padding:14px;background:#ffd700;border:none;font-weight:900;cursor:pointer}
+footer{padding:30px;text-align:center;color:#555;font-size:11px;letter-spacing:3px;border-top:1px solid #111}
+  </style>
 </head>
 <body>
-<header>
-  <a class="logo" href="#">JF<span>+</span></a>
-  <button class="cart-btn" onclick="toggleCart()">Bag (<span id="cartCount">0</span>)</button>
-</header>
-
+<header><a class="logo" href="#">JF<span>+</span></a><button class="cart-btn" onclick="toggleCart()">Bag (<span id="cartCount">0</span>)</button></header>
 <main>
-  <section class="hero">
-    <div>
-      <p class="eyebrow">JF FORGES</p>
-      <h1>MY<br>FINAL<br><em>BEGINNING.</em></h1>
-      <p class="hero-text">Streetwear for people building something from nothing.</p>
-      <a href="#shop" class="button">SHOP THE DROP</a>
-    </div>
-  </section>
-
-  <section id="shop" class="shop">
-    <div class="section-head">
-      <p class="eyebrow">THE FIRST DROP</p>
-      <h2>JF ESSENTIALS</h2>
-    </div>
-    <div class="products">
-      <article class="product">
-        <div class="product-image">JF<br><small>PRODUCT IMAGE</small></div>
-        <div class="product-info">
-          <div><h3>JF Signature Hoodie</h3><p>Heavy streetwear hoodie</p></div>
-          <strong>R699</strong>
-        </div>
-        <button class="add" onclick="addToCart('JF Signature Hoodie',699)">ADD TO BAG</button>
-      </article>
-
-      <article class="product">
-        <div class="product-image">JF<br><small>PRODUCT IMAGE</small></div>
-        <div class="product-info">
-          <div><h3>JF Core Tee</h3><p>Everyday heavyweight tee</p></div>
-          <strong>R399</strong>
-        </div>
-        <button class="add" onclick="addToCart('JF Core Tee',399)">ADD TO BAG</button>
-      </article>
-    </div>
-  </section>
-
-  <section class="story">
-    <p class="eyebrow">THE JF MINDSET</p>
-    <h2>START WITH NOTHING.<br>BUILD SOMETHING.</h2>
-    <p>JF is built around discipline, ambition and the decision to keep going when nobody is watching.</p>
-  </section>
-
-  <section class="contact">
-    <p class="eyebrow">STAY CONNECTED</p>
-    <h2>FOLLOW THE JOURNEY.</h2>
-    <p>Replace these links with your Instagram, TikTok and WhatsApp.</p>
-    <div class="socials">
-      <a href="#" target="_blank">Instagram</a>
-      <a href="#" target="_blank">TikTok</a>
-      <a href="#" target="_blank">WhatsApp</a>
-    </div>
-  </section>
-</main>
-
-<aside id="cart" class="cart">
-  <button class="close" onclick="toggleCart()">×</button>
-  <h2>Your Bag</h2>
-  <div id="cartItems"></div>
-  <div class="total">Total <strong id="cartTotal">R0</strong></div>
-  <button class="checkout" onclick="checkout()">CHECKOUT</button>
-  <p class="checkout-note">Connect this button to your South African payment provider before launching.</p>
-</aside>
-
+<section class="hero"><div><p class="eyebrow">JF FORGES</p><h1>MY<br>FINAL<br><em>BEGINNING.</em></h1><p class="hero-text">Streetwear for people building something from nothing.</p><a href="#shop" class="button">SHOP THE DROP</a></div></section>
+<section id="shop" class="shop"><div class="section-head"><p class="eyebrow">THE FIRST DROP</p><h2>JF ESSENTIALS</h2></div><div class="products">
+<article class="product"><div class="product-image">JF<br><small>IMAGE</small></div><div class="product-info"><div><h3>JF Signature Hoodie</h3><p>Heavy hoodie</p></div><strong>R699</strong></div><button class="add" onclick="addToCart('Hoodie',699)">ADD</button></article>
+<article class="product"><div class="product-image">JF<br><small>IMAGE</small></div><div class="product-info"><div><h3>JF Core Tee</h3><p>Heavyweight tee</p></div><strong>R399</strong></div><button class="add" onclick="addToCart('Tee',399)">ADD</button></article>
+</div></section></main>
+<aside id="cart" class="cart"><button class="close" onclick="toggleCart()">×</button><h2>Your Bag</h2><div id="cartItems" style="margin-top:20px"></div><div class="total">Total <strong id="cartTotal">R0</strong></div><button class="checkout" onclick="checkout()">CHECKOUT</button></aside>
 <footer>© 2026 JF FORGES. BUILT FROM NOTHING.</footer>
-<script src="script.js"></script>
+<script>
+let cart=[];
+function toggleCart(){document.getElementById('cart').classList.toggle('open')}
+function addToCart(n,p){cart.push({name:n,price:p});updateCart();document.getElementById('cart').classList.add('open')}
+function updateCart(){document.getElementById('cartCount').innerText=cart.length;let t=0,h='';cart.forEach(i=>{t+=i.price;h+=`<div style="display:flex;justify-content:space-between;margin-bottom:10px">${i.name} - R${i.price}</div>`});document.getElementById('cartItems').innerHTML=h||'Empty';document.getElementById('cartTotal').innerText='R'+t}
+function checkout(){alert('Total R'+cart.reduce((a,b)=>a+b.price,0))}
+</script>
 </body>
-</html>
+  </html>
