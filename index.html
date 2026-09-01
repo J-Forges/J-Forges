@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JF FORGES — MY FINAL BEGINNING</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><a class="logo">JF<span>+</span></a><div><button class="icon-btn" onclick="toggleAdmin()">Admin</button><button class="cart-btn" onclick="toggleCart()">Bag (<span id="cartCount">0</span>)</button></div></header>
+<main>
+<section class="hero"><p class="eyebrow">JF FORGES</p><h1>MY<br>FINAL<br><em>BEGINNING.</em></h1><p>Streetwear for people building something from nothing.</p><a href="#shop" class="button">SHOP THE DROP</a></section>
+<section id="shop" class="shop"><h2>JF ESSENTIALS</h2><div id="products" class="products"></div></section>
+</main>
+<aside id="cart" class="side"><button class="close" onclick="toggleCart()">×</button><h2>Your Bag</h2><div id="cartItems"></div><div class="total">Total <strong id="cartTotal">R0</strong></div><div class="checkout-form"><h3>Delivery Info</h3><input id="cName" placeholder="Full Name"><input id="cPhone" placeholder="WhatsApp Number"><input id="cAddress" placeholder="Street Address"><input id="cCity" placeholder="City"><button class="checkout" onclick="placeOrder()">PLACE ORDER → WhatsApp</button><p class="note">Your order will be sent to JF FORGES via WhatsApp for confirmation.</p></div></aside>
+<aside id="admin" class="side admin"><button class="close" onclick="toggleAdmin()">×</button><h2>Admin — Edit Store</h2><div id="adminLogin"><input id="adminPass" type="password" placeholder="Password"><button onclick="loginAdmin()">Login</button></div><div id="adminPanel" style="display:none"><h3>Add New Product</h3><input id="pName" placeholder="Product Name"><input id="pPrice" type="number" placeholder="Price (e.g 699)"><input id="pImage" placeholder="Image URL or leave blank"><input id="pColors" placeholder="Colors: Black,White,Gold"><input id="pSizes" placeholder="Sizes: S,M,L,XL"><button onclick="addProduct()">Add Product</button><hr><h3>Orders Received</h3><div id="ordersList"></div><button onclick="clearOrders()" style="margin-top:20px;background:#333;color:#fff">Clear Orders</button></div></aside>
+<footer>© 2026 JF FORGES. BUILT FROM NOTHING.</footer>
+<script src="script.js"></script>
+</body></html>
