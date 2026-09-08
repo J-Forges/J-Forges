@@ -6,3 +6,63 @@
 <div id="productModal" class="modal"><div class="modalbox"><button class="x" onclick="closeProduct()">×</button><div id="productDetail"></div></div></div>
 <aside id="cartDrawer" class="drawer"><button class="x" id="bagClose">×</button><small>YOUR BAG</small><h2>JF CART</h2><div id="cartItems"></div><div class="total"><span>Subtotal</span><b id="cartTotal">R0</b></div><h3>Delivery information</h3><input id="cName" placeholder="Full name"><input id="cPhone" placeholder="WhatsApp / phone number"><input id="cAddress" placeholder="Street address"><input id="cCity" placeholder="City"><button class="cta full" id="placeOrder">PLACE ORDER → WHATSAPP</button><p class="note">Your order is sent to JF FORGES for confirmation.</p></aside>
 <aside id="adminDrawer" class="drawer"><button class="x" id="adminClose">×</button><small>OWNER AREA</small><h2>JF ADMIN</h2><div id="adminLogin"><input id="adminPass" type="password" placeholder="Admin password"><button class="cta full" id="loginAdmin">ENTER ADMIN</button></div><div id="adminPanel" hidden><div class="tabs"><button class="active" data-tab="productsTab">Products</button><button data-tab="ordersTab">Orders</button></div><section id="productsTab"><div class="card"><h3>Add / edit product</h3><input id="pName" placeholder="Product name"><textarea id="pDesc" placeholder="Description"></textarea><input id="pCategory" placeholder="Category"><input id="pColors" placeholder="Colors: Black, Purple, Cream"><input id="pSizes" placeholder="Sizes: S, M, L, XL, 2XL"><p class="note">Enter one price for every size.</p><div id="priceEditor"></div><div class="row"><button class="cta" id="saveProduct">SAVE PRODUCT</button><button id="resetProduct">NEW</button></div></div><div class="card"><h3>Your products</h3><div id="adminProducts"></div></div></section><section id="ordersTab" hidden><div class="card"><h3>Orders received</h3><div id="ordersList"></div><button id="clearOrders" class="full">CLEAR ORDERS</button></div></section></div></aside><div id="scrim"></div><footer>© 2026 JF FORGES — MY FINAL BEGINNING.</footer><script src="script.js"></script></body></html>
+/* JF V3 — Dark Brand Theme */
+
+body {
+    margin: 0;
+    background: #050505;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+/* Main website sections */
+main,
+section,
+.shop-section {
+    background: #050505;
+    color: #ffffff;
+}
+
+/* JF Banner */
+.jf-banner {
+    width: 100%;
+    min-height: 280px;
+    background-image: url("YOUR_BANNER_IMAGE_URL_HERE");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Dark overlay so the banner fits the black theme */
+.jf-banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+/* Banner content */
+.jf-banner-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.jf-banner h1 {
+    font-size: clamp(2.2rem, 7vw, 5rem);
+    margin: 0;
+    letter-spacing: 3px;
+}
+
+.jf-banner p {
+    font-size: 1rem;
+    letter-spacing: 4px;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
