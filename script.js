@@ -1,28 +1,314 @@
-const ADMIN_PASSWORD="JF2026";const WHATSAPP_NUMBER="277XXXXXXXXX";
-const defaults=[{id:1,name:"JF Signature Hoodie",desc:"A core JF piece built for the beginning.",category:"Hoodies",colors:["Black","Purple","Cream"],sizes:["S","M","L","XL","2XL"],prices:{S:699,M:699,L:699,XL:749,"2XL":799},images:[]},{id:2,name:"JF Core Tee",desc:"Everyday streetwear with the JF identity.",category:"T-Shirts",colors:["Black","White","Purple","Navy"],sizes:["S","M","L","XL","2XL"],prices:{S:399,M:399,L:399,XL:449,"2XL":499},images:[]}];
-let products=JSON.parse(localStorage.jf_products||"null")||defaults,cart=JSON.parse(localStorage.jf_cart||"[]"),orders=JSON.parse(localStorage.jf_orders||"[]"),editId=null,state={id:null,color:null,size:null,img:0};
-const $=id=>document.getElementById(id),save=()=>{localStorage.jf_products=JSON.stringify(products);localStorage.jf_cart=JSON.stringify(cart);localStorage.jf_orders=JSON.stringify(orders)},esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-function hex(c){return({black:"#080808",white:"#f5f5f5",purple:"#7d3cff",violet:"#7d3cff",navy:"#182b55",blue:"#2355a4",red:"#b92b2b",green:"#397447",cream:"#e8d7b1",beige:"#d7c2a0",brown:"#704b35",grey:"#777",gray:"#777",gold:"#d4af37",yellow:"#e3c42b",orange:"#e8752d",pink:"#d66b8f"}[String(c).toLowerCase()]||"#888")}
-function img(p,c,i=0){let a=(p.images||[]).filter(x=>x.color===c);return a[i]?.src||`https://placehold.co/900x1000/171717/ffffff?text=${encodeURIComponent(p.name+" — "+c)}`}
-function render(){ $("products").innerHTML=products.map(p=>`<article class="product"><div class="cover" onclick="openProduct(${p.id})"><img src="${img(p,p.colors[0])}"></div><div class="info"><h3>${esc(p.name)}</h3><p class="muted">${esc(p.desc)}</p><div class="price">From R${Math.min(...p.sizes.map(s=>+p.prices[s]||0))}</div><div class="swatches">${p.colors.map((c,i)=>`<button class="swatch ${i?'':'active'}" title="${esc(c)}" style="background:${hex(c)}" onclick="preview(event,${p.id},'${esc(c)}',this)"></button>`).join("")}</div></div></article>`).join("");$("productCount").textContent=products.length+" PIECES"}
-function preview(e,id,c,b){e.stopPropagation();b.parentElement.querySelectorAll(".swatch").forEach(x=>x.classList.remove("active"));b.classList.add("active");b.closest(".product").querySelector("img").src=img(products.find(p=>p.id===id),c)}
-function openProduct(id){let p=products.find(x=>x.id===id);state={id,color:p.colors[0],size:p.sizes[0],img:0};detail();$("productModal").classList.add("show")}
-function detail(){let p=products.find(x=>x.id===state.id),a=(p.images||[]).filter(x=>x.color===state.color),pics=a.length?a:[{src:img(p,state.color)}];if(state.img>=pics.length)state.img=0;$("productDetail").innerHTML=`<div class="detail"><div><div class="gallerymain"><img src="${pics[state.img].src}"></div><div class="thumbs">${pics.map((x,i)=>`<button class="${i===state.img?'active':''}" onclick="state.img=${i};detail()"><img src="${x.src}"></button>`).join("")}</div></div><div class="detailcopy"><small>${esc(p.category)}</small><h2>${esc(p.name)}</h2><p class="muted">${esc(p.desc)}</p><div class="bigprice">R${+p.prices[state.size]||0}</div><div class="muted">COLOR</div><div class="options">${p.colors.map(c=>`<button class="option coloroption ${c===state.color?'active':''}" onclick="state.color='${esc(c)}';state.img=0;detail()"><i class="dot" style="background:${hex(c)}"></i>${esc(c)}</button>`).join("")}</div><div class="muted" style="margin-top:18px">SIZE</div><div class="options">${p.sizes.map(s=>`<button class="option ${s===state.size?'active':''}" onclick="state.size='${esc(s)}';detail()">${esc(s)} — R${+p.prices[s]||0}</button>`).join("")}</div><button class="cta" onclick="addCurrent()">ADD TO BAG</button></div></div>`}
-function closeProduct(){$("productModal").classList.remove("show")}
-function addCurrent(){let p=products.find(x=>x.id===state.id);cart.push({id:Date.now(),name:p.name,color:state.color,size:state.size,price:+p.prices[state.size]||0,qty:1});save();updateCart();closeProduct();openCart()}
-function updateCart(){let n=0,t=0;$("cartItems").innerHTML=cart.length?cart.map((c,i)=>{n+=c.qty;t+=c.price*c.qty;return`<div class="cartline"><div><b>${esc(c.name)}</b><small>${esc(c.color)} / ${esc(c.size)} — R${c.price}</small></div><div class="cartactions"><button onclick="qty(${i},-1)">−</button><b>${c.qty}</b><button onclick="qty(${i},1)">+</button><button class="remove" onclick="rem(${i})">×</button></div></div>`}).join(""):"<p class='muted'>Your bag is empty.</p>";$("cartCount").textContent=n;$("cartTotal").textContent="R"+t}
-function qty(i,d){cart[i].qty+=d;if(cart[i].qty<1)cart.splice(i,1);save();updateCart()}function rem(i){cart.splice(i,1);save();updateCart()}
-function openCart(){$("cartDrawer").classList.add("open");$("scrim").classList.add("show")}function closeCart(){$("cartDrawer").classList.remove("open");if(!$("adminDrawer").classList.contains("open"))$("scrim").classList.remove("show")}function openAdmin(){$("adminDrawer").classList.add("open");$("scrim").classList.add("show")}function closeAdmin(){$("adminDrawer").classList.remove("open");if(!$("cartDrawer").classList.contains("open"))$("scrim").classList.remove("show")}
-$("bagOpen").onclick=openCart;$("bagClose").onclick=closeCart;$("adminOpen").onclick=openAdmin;$("adminClose").onclick=closeAdmin;$("scrim").onclick=()=>{closeCart();closeAdmin()};
-$("loginAdmin").onclick=()=>{if($("adminPass").value===ADMIN_PASSWORD){$("adminLogin").hidden=true;$("adminPanel").hidden=false;adminList();ordersList()}else alert("Wrong password")};
-$("pSizes").oninput=priceEditor;$("resetProduct").onclick=()=>{editId=null;["pName","pDesc","pCategory","pColors","pSizes"].forEach(id=>$(id).value="");$("priceEditor").innerHTML=""};
-function priceEditor(){let ss=$("pSizes").value.split(",").map(x=>x.trim()).filter(Boolean),p=editId&&products.find(x=>x.id===editId);$("priceEditor").innerHTML=ss.map(s=>`<div class="priceRow"><input readonly value="${esc(s)}"><input data-price="${esc(s)}" type="number" value="${p?.prices[s]||''}" placeholder="R price"></div>`).join("")}
-$("saveProduct").onclick=()=>{let name=$("pName").value.trim(),ss=$("pSizes").value.split(",").map(x=>x.trim()).filter(Boolean),cs=$("pColors").value.split(",").map(x=>x.trim()).filter(Boolean);if(!name||!ss.length||!cs.length)return alert("Add a name, colors and sizes.");let prices={};$("priceEditor").querySelectorAll("[data-price]").forEach(x=>prices[x.dataset.price]=+x.value||0);if(ss.some(s=>!prices[s]))return alert("Give every size a price.");if(editId){let p=products.find(x=>x.id===editId);Object.assign(p,{name,desc:$("pDesc").value,category:$("pCategory").value,colors:cs,sizes:ss,prices})}else products.push({id:Date.now(),name,desc:$("pDesc").value,category:$("pCategory").value||"JF",colors:cs,sizes:ss,prices,images:[]});save();render();adminList();$("resetProduct").click();alert("Product saved.")};
-function adminList(){$("adminProducts").innerHTML=products.map(p=>`<div class="adminproduct"><b>${esc(p.name)}</b><br><small>Colors: ${esc(p.colors.join(", "))}</small><br><small>${p.sizes.map(s=>s+": R"+p.prices[s]).join(" · ")}</small><div class="adminactions"><button onclick="edit(${p.id})">EDIT</button><button onclick="photos(${p.id})">ADD PHOTOS</button><button onclick="del(${p.id})">DELETE</button></div></div>`).join("")}
-function edit(id){let p=products.find(x=>x.id===id);editId=id;$("pName").value=p.name;$("pDesc").value=p.desc||"";$("pCategory").value=p.category||"";$("pColors").value=p.colors.join(", ");$("pSizes").value=p.sizes.join(", ");priceEditor()}
-function del(id){if(confirm("Delete this product?")){products=products.filter(p=>p.id!==id);save();render();adminList()}}
-function photos(id){let p=products.find(x=>x.id===id),c=prompt("Color for these photos: "+p.colors.join(", "),p.colors[0]);if(!c||!p.colors.includes(c))return alert("Choose one of the listed colors.");let u=prompt("Paste public image URLs separated by commas. The production upgrade can support direct phone uploads.","");if(!u)return;u.split(",").map(x=>x.trim()).filter(Boolean).forEach(src=>p.images.push({src,color:c}));save();render();alert("Photos added.")}
-function ordersList(){$("ordersList").innerHTML=orders.length?orders.map(o=>`<div class="adminproduct"><b>${esc(o.name)}</b> — R${o.total}<br><small>${esc(o.phone)} · ${esc(o.city)} · ${esc(o.date)}</small><br><small>${o.cart.map(c=>esc(c.name)+" ("+esc(c.color)+"/"+esc(c.size)+") x"+c.qty).join("<br>")}</small></div>`).join(""):"<p class='muted'>No orders yet.</p>"}
-$("clearOrders").onclick=()=>{if(confirm("Clear all orders?")){orders=[];save();ordersList()}};document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("productsTab").hidden=b.dataset.tab!=="productsTab";$("ordersTab").hidden=b.dataset.tab!=="ordersTab"});
-$("placeOrder").onclick=()=>{if(!cart.length)return alert("Your bag is empty.");let name=$("cName").value.trim(),phone=$("cPhone").value.trim(),address=$("cAddress").value.trim(),city=$("cCity").value.trim();if(!name||!phone||!address||!city)return alert("Please fill in all delivery information.");let total=cart.reduce((a,c)=>a+c.price*c.qty,0),o={id:"JF-"+Date.now(),name,phone,address,city,cart:[...cart],total,date:new Date().toLocaleString()};orders.push(o);save();let items=cart.map(c=>`- ${c.name} | ${c.color} | ${c.size} | x${c.qty} | R${c.price*c.qty}`).join("\n"),msg=`NEW JF FORGES ORDER\n${o.id}\nName: ${name}\nWhatsApp: ${phone}\nAddress: ${address}, ${city}\n\nITEMS\n${items}\n\nTOTAL: R${total}`;if(WHATSAPP_NUMBER.includes("X"))alert("Order saved. Replace WHATSAPP_NUMBER in script.js with your real WhatsApp number.");else window.open("https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg),"_blank");cart=[];save();updateCart();closeCart()};
-render();updateCart();
+const DEFAULT_PRODUCTS = [
+  {
+    "id": "jf-tee",
+    "name": "JF Signature Tee",
+    "price": 499,
+    "category": "T-Shirts",
+    "badge": "CORE",
+    "desc": "The everyday JF piece. Clean, heavyweight-inspired streetwear energy with the J-FORGES mark.",
+    "colors": [
+      "Black"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "images": [
+      "assets/black-tee.jpg",
+      "assets/black-tee-alt.jpg"
+    ]
+  },
+  {
+    "id": "jf-hoodie",
+    "name": "JF Signature Hoodie",
+    "price": 899,
+    "category": "Hoodies",
+    "badge": "CORE",
+    "desc": "A clean JF hoodie with the signature mark across the chest and sleeves.",
+    "colors": [
+      "White"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "images": [
+      "assets/white-hoodie.jpg",
+      "assets/white-hoodie-alt.jpg"
+    ]
+  },
+  {
+    "id": "jf-crewneck",
+    "name": "JF Forged Crewneck",
+    "price": 799,
+    "category": "Sweatshirts",
+    "badge": "NEW",
+    "desc": "Minimal from a distance. Distinctive up close. Built around the JF FORGES identity.",
+    "colors": [
+      "Black"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "images": [
+      "assets/black-crewneck-front.jpg",
+      "assets/black-crewneck-alt.jpg"
+    ]
+  },
+  {
+    "id": "jf-varsity",
+    "name": "JF Varsity Jacket",
+    "price": 1299,
+    "category": "Outerwear",
+    "badge": "STATEMENT",
+    "desc": "The statement layer of the collection. Black-and-white varsity styling with JF graphics.",
+    "colors": [
+      "Black / White"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "images": [
+      "assets/varsity-front.jpg",
+      "assets/varsity-back.jpg"
+    ]
+  },
+  {
+    "id": "jf-beanie",
+    "name": "JF Forged Beanie",
+    "price": 399,
+    "category": "Accessories",
+    "badge": "ESSENTIAL",
+    "desc": "Ribbed black beanie finished with the JF FORGES mark.",
+    "colors": [
+      "Black"
+    ],
+    "sizes": [
+      "One Size"
+    ],
+    "images": [
+      "assets/black-beanie-front.png",
+      "assets/black-beanie-back.png"
+    ]
+  },
+  {
+    "id": "jf-tote",
+    "name": "JF Everyday Tote",
+    "price": 349,
+    "category": "Accessories",
+    "badge": "ESSENTIAL",
+    "desc": "A simple everyday carry with the JF FORGES graphic. Choose white or black handles.",
+    "colors": [
+      "White / White Handle",
+      "White / Black Handle"
+    ],
+    "sizes": [
+      "One Size"
+    ],
+    "images": [
+      "assets/white-tote-white-handles.png",
+      "assets/white-tote-black-handles.png"
+    ]
+  }
+];
+const ADMIN_PASSWORD = "JF2026";
+
+let products = JSON.parse(localStorage.getItem("jf_products_v3") || "null") || DEFAULT_PRODUCTS;
+let cart = JSON.parse(localStorage.getItem("jf_cart_v3") || "[]");
+let orders = JSON.parse(localStorage.getItem("jf_orders_v3") || "[]");
+let settings = JSON.parse(localStorage.getItem("jf_settings_v3") || "null") || {
+  title:"JF ESSENTIALS",
+  wa:"27700000000"
+};
+let activeCategory = "ALL";
+let selectedProduct = null;
+let selectedColor = null;
+let selectedSize = null;
+let currentImage = 0;
+
+function money(n){ return "R" + Number(n).toLocaleString("en-ZA"); }
+function saveAll(){
+  localStorage.setItem("jf_products_v3", JSON.stringify(products));
+  localStorage.setItem("jf_cart_v3", JSON.stringify(cart));
+  localStorage.setItem("jf_orders_v3", JSON.stringify(orders));
+  localStorage.setItem("jf_settings_v3", JSON.stringify(settings));
+}
+function toast(msg){
+  const el=document.getElementById("toast"); el.textContent=msg; el.classList.add("show");
+  clearTimeout(window._toast); window._toast=setTimeout(()=>el.classList.remove("show"),2200);
+}
+function openOverlay(){document.getElementById("overlay").classList.add("show")}
+function closeAll(){closeCart();closeCheckout();closeAdmin();closeProduct()}
+function openCart(){renderCart();document.getElementById("cart").classList.add("open");openOverlay()}
+function closeCart(){document.getElementById("cart").classList.remove("open")}
+function openCheckout(){
+  if(!cart.length) return toast("Your bag is empty.");
+  closeCart(); document.getElementById("checkout").classList.add("open");
+  document.getElementById("checkoutTotal").textContent=money(cartTotal()); openOverlay();
+}
+function closeCheckout(){document.getElementById("checkout").classList.remove("open")}
+function openAdmin(){document.getElementById("admin").classList.add("open");openOverlay()}
+function closeAdmin(){document.getElementById("admin").classList.remove("open")}
+function openProduct(id){
+  selectedProduct=products.find(p=>p.id===id); if(!selectedProduct) return;
+  selectedColor=selectedProduct.colors[0]; selectedSize=selectedProduct.sizes[0]; currentImage=0;
+  document.getElementById("mName").textContent=selectedProduct.name;
+  document.getElementById("mPrice").textContent=money(selectedProduct.price);
+  document.getElementById("mDesc").textContent=selectedProduct.desc;
+  renderModal();
+  document.getElementById("productModal").classList.add("open");
+}
+function closeProduct(){document.getElementById("productModal").classList.remove("open")}
+function renderModal(){
+  const img=document.getElementById("mImg"); img.src=selectedProduct.images[currentImage];
+  const thumbs=document.getElementById("mThumbs"); thumbs.innerHTML="";
+  selectedProduct.images.forEach((src,i)=>{const x=document.createElement("img");x.src=src;x.className=i===currentImage?"active":"";x.onclick=()=>{currentImage=i;renderModal()};thumbs.appendChild(x)});
+  renderChoices("mColors",selectedProduct.colors,selectedColor,v=>{selectedColor=v;renderModal()});
+  renderChoices("mSizes",selectedProduct.sizes,selectedSize,v=>{selectedSize=v;renderModal()});
+}
+function renderChoices(id,arr,selected,onClick){
+  const box=document.getElementById(id);box.innerHTML="";
+  arr.forEach(v=>{const b=document.createElement("button");b.className="choice"+(v===selected?" selected":"");b.textContent=v;b.onclick=()=>onClick(v);box.appendChild(b)});
+}
+function addSelected(){
+  if(!selectedProduct) return;
+  const existing=cart.find(x=>x.productId===selectedProduct.id&&x.color===selectedColor&&x.size===selectedSize);
+  if(existing) existing.qty++;
+  else cart.push({productId:selectedProduct.id,name:selectedProduct.name,price:selectedProduct.price,color:selectedColor,size:selectedSize,qty:1,image:selectedProduct.images[0]});
+  saveAll();updateBag();closeProduct();toast("Added to your bag.");
+}
+function cartTotal(){return cart.reduce((s,x)=>s+x.price*x.qty,0)}
+function updateBag(){document.getElementById("bagCount").textContent=cart.reduce((s,x)=>s+x.qty,0)}
+function renderCart(){
+  const box=document.getElementById("cartItems");box.innerHTML="";
+  if(!cart.length){box.innerHTML='<p class="hint">Your bag is empty. Start with the first JF drop.</p>';document.getElementById("cartTotal").textContent="R0";return}
+  cart.forEach((x,i)=>{
+    const d=document.createElement("div");d.className="cart-item";
+    d.innerHTML=`<img src="${x.image}"><div><h4>${x.name}</h4><small>${x.color} · ${x.size}</small><div class="qty"><button onclick="changeQty(${i},-1)">−</button><b>${x.qty}</b><button onclick="changeQty(${i},1)">+</button></div></div><div><b class="price">${money(x.price*x.qty)}</b><br><button class="remove" onclick="removeItem(${i})">REMOVE</button></div>`;
+    box.appendChild(d);
+  });
+  document.getElementById("cartTotal").textContent=money(cartTotal());
+}
+function changeQty(i,delta){cart[i].qty+=delta;if(cart[i].qty<=0)cart.splice(i,1);saveAll();updateBag();renderCart()}
+function removeItem(i){cart.splice(i,1);saveAll();updateBag();renderCart()}
+function categories(){
+  const cats=["ALL",...new Set(products.map(p=>p.category))];
+  const box=document.getElementById("filters");box.innerHTML="";
+  cats.forEach(c=>{const b=document.createElement("button");b.className="filter"+(activeCategory===c?" active":"");b.textContent=c;b.onclick=()=>{activeCategory=c;renderProducts()};box.appendChild(b)});
+}
+function renderProducts(){
+  categories();
+  const list=activeCategory==="ALL"?products:products.filter(p=>p.category===activeCategory);
+  document.getElementById("productCount").textContent=list.length+" PIECES";
+  const box=document.getElementById("products");box.innerHTML="";
+  list.forEach(p=>{
+    const d=document.createElement("article");d.className="product";
+    d.innerHTML=`<div class="product-img"><span class="badge">${p.badge||"JF"}</span><img src="${p.images[0]}" alt="${p.name}"></div><div class="product-info"><div class="meta"><div><h3>${p.name}</h3><div class="price">${money(p.price)}</div></div></div><p>${p.desc}</p><button class="product-btn" onclick="openProduct('${p.id}')">VIEW PIECE →</button></div>`;
+    box.appendChild(d);
+  });
+}
+function login(){
+  if(document.getElementById("password").value!==ADMIN_PASSWORD) return toast("Wrong password.");
+  document.getElementById("login").classList.add("hidden");document.getElementById("adminApp").classList.remove("hidden");
+  renderAdmin();document.getElementById("password").value="";
+}
+function tab(id){
+  ["productsTab","ordersTab","storeTab"].forEach(x=>document.getElementById(x).classList.toggle("hidden",x!==id));
+}
+function renderAdmin(){
+  renderAdminProducts();renderAdminOrders();
+  document.getElementById("titleSetting").value=settings.title;
+  document.getElementById("waSetting").value=settings.wa;
+}
+function renderAdminProducts(){
+  const box=document.getElementById("adminProducts");box.innerHTML="";
+  products.forEach((p,i)=>{
+    const d=document.createElement("div");d.className="admin-card";
+    d.innerHTML=`<h4>${p.name}</h4>
+      <div class="admin-image-grid">${(p.images||[]).map((src,j)=>`<div class="admin-image"><img src="${src}" alt="${p.name} photo ${j+1}"><button type="button" class="remove-image" onclick="removeProductImage(${i},${j})">×</button></div>`).join("")}</div>
+      <label class="upload-label">ADD PRODUCT PHOTOS<input type="file" accept="image/*" multiple onchange="uploadProductImages(${i},this.files)"><small class="hint">Choose one or several photos from your phone.</small></label>
+      <label>Name<input value="${p.name}" onchange="editProduct(${i},'name',this.value)"></label>
+      <div class="row"><input type="number" value="${p.price}" onchange="editProduct(${i},'price',Number(this.value))"><button class="danger" onclick="deleteProduct(${i})">Delete</button></div>
+      <label>Description<textarea onchange="editProduct(${i},'desc',this.value)">${p.desc}</textarea></label>`;
+    box.appendChild(d);
+  });
+}
+
+function uploadProductImages(i, files){
+  if(!files || !files.length) return;
+  const list=Array.from(files);
+  let done=0;
+  list.forEach(file=>{
+    if(!file.type.startsWith('image/')) { done++; return; }
+    const reader=new FileReader();
+    reader.onload=()=>{
+      products[i].images=products[i].images||[];
+      products[i].images.push(reader.result);
+      done++;
+      if(done===list.length){ saveAll(); renderProducts(); renderAdminProducts(); toast('Product photo(s) added.'); }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function removeProductImage(i,j){
+  if(!products[i].images || products[i].images.length<=1) return toast('Keep at least one product photo.');
+  products[i].images.splice(j,1);
+  saveAll(); renderProducts(); renderAdminProducts(); toast('Photo removed.');
+}
+function editProduct(i,key,val){products[i][key]=val;saveAll();renderProducts();toast("Product updated.")}
+function deleteProduct(i){if(!confirm("Delete this product?"))return;products.splice(i,1);saveAll();renderProducts();renderAdminProducts();toast("Product deleted.")}
+function addProduct(){
+  const id="jf-"+Date.now();
+  products.unshift({id,name:"New JF Product",price:500,category:"New",badge:"NEW",desc:"Describe this JF piece.",colors:["Black"],sizes:["S","M","L","XL","2XL"],images:[products[0]?.images[0]||"assets/black-tee.jpg"]});
+  saveAll();renderProducts();renderAdminProducts();toast("New product added. Edit its details below.");
+}
+function renderAdminOrders(){
+  const box=document.getElementById("adminOrders");box.innerHTML="";
+  if(!orders.length){box.innerHTML='<p class="hint">No orders saved yet.</p>';return}
+  orders.slice().reverse().forEach(o=>{
+    const d=document.createElement("div");d.className="order-card";
+    d.innerHTML=`<h4>${o.name} — ${money(o.total)}</h4><div class="hint">${o.date}<br>${o.phone} · ${o.email}<br>${o.address}, ${o.city}, ${o.province}, ${o.country}</div><p>${o.items.map(x=>`${x.qty}× ${x.name} (${x.color}, ${x.size})`).join("<br>")}</p>`;
+    box.appendChild(d);
+  });
+}
+function clearOrders(){if(confirm("Clear all saved orders?")){orders=[];saveAll();renderAdminOrders();}}
+function saveStore(){
+  settings.title=document.getElementById("titleSetting").value.trim()||"JF ESSENTIALS";
+  settings.wa=document.getElementById("waSetting").value.replace(/\D/g,"");
+  saveAll();document.getElementById("storeTitle").textContent=settings.title;toast("Store settings saved.");
+}
+function placeOrder(e){
+  e.preventDefault();if(!cart.length)return toast("Your bag is empty.");
+  const o={
+    id:"JF-"+Date.now(),
+    date:new Date().toLocaleString("en-ZA"),
+    name:document.getElementById("name").value,email:document.getElementById("email").value,
+    phone:document.getElementById("phone").value,address:document.getElementById("address").value,
+    city:document.getElementById("city").value,province:document.getElementById("province").value,
+    country:document.getElementById("country").value,note:document.getElementById("note").value,
+    total:cartTotal(),items:JSON.parse(JSON.stringify(cart))
+  };
+  orders.push(o);saveAll();
+  let msg=`JF FORGES ORDER %0A%0AOrder: ${o.id}%0AName: ${o.name}%0AWhatsApp: ${o.phone}%0AEmail: ${o.email}%0AAddress: ${o.address}, ${o.city}, ${o.province}, ${o.country}%0A%0AITEMS%0A`;
+  o.items.forEach(x=>msg+=`${x.qty}x ${x.name} — ${x.color} — ${x.size} — ${money(x.price*x.qty)}%0A`);
+  msg+=`%0ASubtotal: ${money(o.total)}%0ANote: ${o.note||"None"}`;
+  cart=[];saveAll();updateBag();closeCheckout();
+  window.open("https://wa.me/"+(settings.wa||"27700000000")+"?text="+msg,"_blank");
+  toast("Order saved. Opening WhatsApp.");
+}
+document.getElementById("storeTitle").textContent=settings.title;
+renderProducts();updateBag();
