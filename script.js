@@ -1,4 +1,4 @@
-const ADMIN_PASSWORD="JF2026";const WHATSAPP_NUMBER="277XXXXXXXXX";
+const ADMIN_PASSWORD="JF2026";const WHATSAPP_NUMBER="27761747612";
 const defaults=[{id:1,name:"JF Signature Hoodie",desc:"A core JF piece built for the beginning.",category:"Hoodies",colors:["Black","Purple","Cream"],sizes:["S","M","L","XL","2XL"],prices:{S:699,M:699,L:699,XL:749,"2XL":799},images:[]},{id:2,name:"JF Core Tee",desc:"Everyday streetwear with the JF identity.",category:"T-Shirts",colors:["Black","White","Purple","Navy"],sizes:["S","M","L","XL","2XL"],prices:{S:399,M:399,L:399,XL:449,"2XL":499},images:[]}];
 let products=JSON.parse(localStorage.jf_products||"null")||defaults,cart=JSON.parse(localStorage.jf_cart||"[]"),orders=JSON.parse(localStorage.jf_orders||"[]"),editId=null,state={id:null,color:null,size:null,img:0};
 const $=id=>document.getElementById(id),save=()=>{localStorage.jf_products=JSON.stringify(products);localStorage.jf_cart=JSON.stringify(cart);localStorage.jf_orders=JSON.stringify(orders)},esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -26,3 +26,53 @@ function ordersList(){$("ordersList").innerHTML=orders.length?orders.map(o=>`<di
 $("clearOrders").onclick=()=>{if(confirm("Clear all orders?")){orders=[];save();ordersList()}};document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("productsTab").hidden=b.dataset.tab!=="productsTab";$("ordersTab").hidden=b.dataset.tab!=="ordersTab"});
 $("placeOrder").onclick=()=>{if(!cart.length)return alert("Your bag is empty.");let name=$("cName").value.trim(),phone=$("cPhone").value.trim(),address=$("cAddress").value.trim(),city=$("cCity").value.trim();if(!name||!phone||!address||!city)return alert("Please fill in all delivery information.");let total=cart.reduce((a,c)=>a+c.price*c.qty,0),o={id:"JF-"+Date.now(),name,phone,address,city,cart:[...cart],total,date:new Date().toLocaleString()};orders.push(o);save();let items=cart.map(c=>`- ${c.name} | ${c.color} | ${c.size} | x${c.qty} | R${c.price*c.qty}`).join("\n"),msg=`NEW JF FORGES ORDER\n${o.id}\nName: ${name}\nWhatsApp: ${phone}\nAddress: ${address}, ${city}\n\nITEMS\n${items}\n\nTOTAL: R${total}`;if(WHATSAPP_NUMBER.includes("X"))alert("Order saved. Replace WHATSAPP_NUMBER in script.js with your real WhatsApp number.");else window.open("https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg),"_blank");cart=[];save();updateCart();closeCart()};
 render();updateCart();
+// MOBILE / BROWSER BACK BUTTON SUPPORT
+
+let productHistoryOpen = false;
+
+function openProduct(id) {
+
+    let p = products.find(x => x.id === id);
+
+    state = {
+        id: id,
+        color: p.colors[0],
+        size: p.sizes[0],
+        img: 0
+    };
+
+    detail();
+
+    $("productModal").classList.add("show");
+
+    if (!productHistoryOpen) {
+        history.pushState(
+            { jfProduct: true },
+            "",
+            "#product-" + id
+        );
+
+        productHistoryOpen = true;
+    }
+}
+
+
+function closeProduct(fromBack = false) {
+
+    $("productModal").classList.remove("show");
+
+    if (productHistoryOpen && !fromBack) {
+        history.back();
+    }
+
+    productHistoryOpen = false;
+}
+
+
+window.addEventListener("popstate", function () {
+
+    if ($("productModal").classList.contains("show")) {
+        closeProduct(true);
+    }
+
+});
