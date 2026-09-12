@@ -1,36 +1,18 @@
-JF FORGES — STORE V3 FINAL
+JF FORGES V3 FINAL UPDATED
+Admin password: JF2026
 
-This is the finalized V3 front-end prototype using the real JF product mockups.
+FIXES:
+- Different price per size; selecting XL/2XL updates the price.
+- Unlimited color names, not just black/white.
+- Multiple photos per color.
+- Product gallery has horizontally scrollable thumbnails and works well on mobile.
+- Product detail is responsive/mobile-friendly.
+- Smart cart supports +, -, and remove.
+- Admin can add/edit/delete products.
+- Admin can attach public image URLs to specific colors.
+- Checkout collects name, WhatsApp/phone, address and city and can send the order to WhatsApp.
+- Orders are saved in browser storage for this V3 prototype.
 
-WHAT'S INCLUDED
-- JF FORGES branding + slogan: MY FINAL BEGINNING.
-- 6-product collection: tee, hoodie, crewneck, varsity jacket, beanie, tote.
-- Product detail gallery.
-- Color + size selection.
-- Cart and quantity controls.
-- Checkout form.
-- Browser-saved orders + WhatsApp handoff.
-- Admin product editing.
-- EASY PRODUCT PHOTO UPLOAD: Admin > Products > Add Product Photos.
-- Remove product photos from the admin panel.
-- Store title + WhatsApp settings.
-
-HOW TO ADD YOUR OWN PRODUCT PICTURES
-1. Open index.html in a browser.
-2. Click Admin.
-3. Enter demo password: JF2026.
-4. Open Products.
-5. Find the product you want.
-6. Tap/click ADD PRODUCT PHOTOS.
-7. Choose photos from your phone or computer.
-8. The photos immediately appear in the product gallery.
-9. Use the × button on a photo to remove it.
-
-IMPORTANT
-V3 stores uploaded images in browser localStorage as a prototype. They are NOT uploaded to a public server and will not automatically appear on another phone/device. For the live store, product images should be stored in secure cloud storage/database and served from there.
-
-DEMO ADMIN PASSWORD
-JF2026
-
-NEXT LIVE-STORE STEP
-Connect secure authentication, database, image storage, payments, shipping, order notifications and fulfillment.
+IMPORTANT:
+V3 is still a browser-only prototype. The admin password, products and orders are stored locally, so do not treat this as production-grade security. For the live store, move authentication/database/image storage/payment/shipping to a real backend.
+To enable WhatsApp, replace WHATSAPP_NUMBER in script.js with your number in international format without +, e.g. 27731234567.
