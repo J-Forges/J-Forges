@@ -55,8 +55,6 @@ function openProduct(id) {
         productHistoryOpen = true;
     }
 }
-
-
 function closeProduct(fromBack = false) {
 
     $("productModal").classList.remove("show");
@@ -76,3 +74,18 @@ window.addEventListener("popstate", function () {
     }
 
 });
+function removeProductPhoto(productId, photoIndex) {
+    const product = products.find(p => p.id === productId);
+
+    if (!product || !product.images) return;
+
+    if (!confirm("Remove this photo?")) return;
+
+    product.images.splice(photoIndex, 1);
+
+    save();
+    render();
+    adminList();
+
+    alert("Photo removed.");
+                                                                                                                                                                                                                                                                                                                                 }
