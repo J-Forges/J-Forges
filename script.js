@@ -18,7 +18,79 @@ $("loginAdmin").onclick=()=>{if($("adminPass").value===ADMIN_PASSWORD){$("adminL
 $("pSizes").oninput=priceEditor;$("resetProduct").onclick=()=>{editId=null;["pName","pDesc","pCategory","pColors","pSizes"].forEach(id=>$(id).value="");$("priceEditor").innerHTML=""};
 function priceEditor(){let ss=$("pSizes").value.split(",").map(x=>x.trim()).filter(Boolean),p=editId&&products.find(x=>x.id===editId);$("priceEditor").innerHTML=ss.map(s=>`<div class="priceRow"><input readonly value="${esc(s)}"><input data-price="${esc(s)}" type="number" value="${p?.prices[s]||''}" placeholder="R price"></div>`).join("")}
 $("saveProduct").onclick=()=>{let name=$("pName").value.trim(),ss=$("pSizes").value.split(",").map(x=>x.trim()).filter(Boolean),cs=$("pColors").value.split(",").map(x=>x.trim()).filter(Boolean);if(!name||!ss.length||!cs.length)return alert("Add a name, colors and sizes.");let prices={};$("priceEditor").querySelectorAll("[data-price]").forEach(x=>prices[x.dataset.price]=+x.value||0);if(ss.some(s=>!prices[s]))return alert("Give every size a price.");if(editId){let p=products.find(x=>x.id===editId);Object.assign(p,{name,desc:$("pDesc").value,category:$("pCategory").value,colors:cs,sizes:ss,prices})}else products.push({id:Date.now(),name,desc:$("pDesc").value,category:$("pCategory").value||"JF",colors:cs,sizes:ss,prices,images:[]});save();render();adminList();$("resetProduct").click();alert("Product saved.")};
-function adminList(){$("adminProducts").innerHTML=products.map(p=>`<div class="adminproduct"><b>${esc(p.name)}</b><br><small>Colors: ${esc(p.colors.join(", "))}</small><br><small>${p.sizes.map(s=>s+": R"+p.prices[s]).join(" · ")}</small><div class="adminactions"><button onclick="edit(${p.id})">EDIT</button><button onclick="photos(${p.id})">ADD PHOTOS</button><button onclick="del(${p.id})">DELETE</button></div></div>`).join("")}
+funcffunction adminList() {
+    $("adminProducts").innerHTML = products.map((p, i) => `
+        <div class="adminproduct"
+             draggable="true"
+             data-id="${p.id}"
+             style="cursor:grab">
+
+            <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:20px">☷</span>
+                <div>
+                    <b>${esc(p.name)}</b><br>
+                    <small>Position ${i + 1}</small>
+                </div>
+            </div>
+
+            <small>
+                Colors: ${esc(p.colors.join(", "))}
+            </small><br>
+
+            <small>
+                ${p.sizes.map(s => s + ": R" + p.prices[s]).join(" · ")}
+            </small>
+
+            <div class="adminactions">
+                <button onclick="edit(${p.id})">EDIT</button>
+                <button onclick="photos(${p.id})">ADD PHOTOS</button>
+                <button onclick="del(${p.id})">DELETE</button>
+            </div>
+        </div>
+    `).join("");
+
+    enableProductDrag();
+    }
+function enableProductDrag() {
+
+    let dragged = null;
+
+    document.querySelectorAll(".adminproduct").forEach(item => {
+
+        item.addEventListener("dragstart", () => {
+            dragged = item;
+            item.style.opacity = "0.4";
+        });
+
+        item.addEventListener("dragend", () => {
+            item.style.opacity = "1";
+            dragged = null;
+        });
+
+        item.addEventListener("dragover", e => {
+            e.preventDefault();
+        });
+
+        item.addEventListener("drop", e => {
+            e.preventDefault();
+
+            if (!dragged || dragged === item) return;
+
+            const fromId = Number(dragged.dataset.id);
+            const toId = Number(item.dataset.id);
+
+            const fromIndex = products.findIndex(p => p.id === fromId);
+            const toIndex = products.findIndex(p => p.id === toId);
+
+            const moved = products.splice(fromIndex, 1)[0];
+            products.splice(toIndex, 0, moved);
+
+            save();
+            render();
+            adminList();
+        });
+    });
+                  }
 function edit(id){let p=products.find(x=>x.id===id);editId=id;$("pName").value=p.name;$("pDesc").value=p.desc||"";$("pCategory").value=p.category||"";$("pColors").value=p.colors.join(", ");$("pSizes").value=p.sizes.join(", ");priceEditor()}
 function del(id){if(confirm("Delete this product?")){products=products.filter(p=>p.id!==id);save();render();adminList()}}
 function photos(id){let p=products.find(x=>x.id===id),c=prompt("Color for these photos: "+p.colors.join(", "),p.colors[0]);if(!c||!p.colors.includes(c))return alert("Choose one of the listed colors.");let u=prompt("Paste public image URLs separated by commas. The production upgrade can support direct phone uploads.","");if(!u)return;u.split(",").map(x=>x.trim()).filter(Boolean).forEach(src=>p.images.push({src,color:c}));save();render();alert("Photos added.")}
