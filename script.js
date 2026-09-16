@@ -88,4 +88,65 @@ function removeProductPhoto(productId, photoIndex) {
     adminList();
 
     alert("Photo removed.");
-                                                                                                                                                                                                                                                                                                                                 }
+     function buildOrderMessage() {
+  let message = "JF FORGES ORDER\n\n";
+
+  message += "CUSTOMER DETAILS\n";
+  message += "Name: " + (document.getElementById("customerName")?.value || "") + "\n";
+  message += "Email: " + (document.getElementById("customerEmail")?.value || "") + "\n";
+  message += "Phone: " + (document.getElementById("customerPhone")?.value || "") + "\n";
+  message += "Address: " + (document.getElementById("customerAddress")?.value || "") + "\n";
+  message += "City: " + (document.getElementById("customerCity")?.value || "") + "\n\n";
+
+  message += "ORDER\n";
+
+  if (typeof cart !== "undefined" && cart.length) {
+    cart.forEach(item => {
+      message += `${item.name} | Size: ${item.size} | Colour: ${item.color} | Qty: ${item.qty} | Price: R${item.price}\n`;
+    });
+  }
+
+  message += "\nTOTAL: R" + (
+    typeof cart !== "undefined"
+      ? cart.reduce((total, item) => total + (item.price * item.qty), 0)
+      : 0
+  );
+
+  return message;
+}
+
+
+function placeOrderWhatsApp() {
+  const message = buildOrderMessage();
+
+  // REPLACE THIS WITH YOUR REAL JF FORGES WHATSAPP NUMBER
+  const whatsappNumber = "27761747612";
+
+  const url =
+    "https://wa.me/" +
+    whatsappNumber +
+    "?text=" +
+    encodeURIComponent(message);
+
+  window.open(url, "_blank");
+}
+
+
+function placeOrderEmail() {
+  const message = buildOrderMessage();
+
+  const subject = encodeURIComponent("JF FORGES New Order");
+
+  // REPLACE THIS WITH YOUR JF FORGES EMAIL
+  const email = "karabomotu@gmail.com";
+
+  const body = encodeURIComponent(message);
+
+  window.location.href =
+    "mailto:" +
+    email +
+    "?subject=" +
+    subject +
+    "&body=" +
+    body;
+        }                                                                                                                                                                                                                                                                                                                            }
