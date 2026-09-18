@@ -3,15 +3,15 @@ let db=null;
 if(window.supabase&&cfg.url&&cfg.anonKey) db=window.supabase.createClient(cfg.url,cfg.anonKey);
 
 const DEFAULT_PRODUCTS=[{"id": "jf-tee", "name": "JF Signature Tee", "price": 499, "category": "T-Shirts", "badge": "CORE", "desc": "The everyday JF piece. Clean streetwear energy with the J-FORGES mark.", "colors": ["Black"], "sizes": ["S", "M", "L", "XL", "2XL"], "prices": {"S": 499, "M": 499, "L": 499, "XL": 549, "2XL": 599}, "images": [{"src": "assets/black-tee.jpg", "color": "Black"}, {"src": "assets/black-tee-alt.jpg", "color": "Black"}]}, {"id": "jf-hoodie", "name": "JF Signature Hoodie", "price": 899, "category": "Hoodies", "badge": "CORE", "desc": "A clean JF hoodie with the signature mark across the chest and sleeves.", "colors": ["White"], "sizes": ["S", "M", "L", "XL", "2XL"], "prices": {"S": 899, "M": 899, "L": 899, "XL": 949, "2XL": 999}, "images": [{"src": "assets/white-hoodie.jpg", "color": "White"}, {"src": "assets/white-hoodie-alt.jpg", "color": "White"}]}, {"id": "jf-black-hoodie", "name": "JF Black Hoodie", "price": 899, "category": "Hoodies", "badge": "DROP", "desc": "The black JF hoodie with the forged mark across the chest and sleeves.", "colors": ["Black"], "sizes": ["S", "M", "L", "XL", "2XL"], "prices": {"S": 899, "M": 899, "L": 899, "XL": 949, "2XL": 999}, "images": [{"src": "assets/f7dba205-97d9-498d-b7bc-35da53e72261.png", "color": "Black"}, {"src": "assets/8a370447-8ea5-4831-8681-395703150a20.png", "color": "Black"}]}, {"id": "jf-crewneck", "name": "JF Forged Crewneck", "price": 799, "category": "Sweatshirts", "badge": "NEW", "desc": "Minimal from a distance. Distinctive up close. Built around the JF FORGES identity.", "colors": ["Black"], "sizes": ["S", "M", "L", "XL", "2XL"], "prices": {"S": 799, "M": 799, "L": 799, "XL": 849, "2XL": 899}, "images": [{"src": "assets/black-crewneck-front.jpg", "color": "Black"}, {"src": "assets/black-crewneck-alt.jpg", "color": "Black"}]}, {"id": "jf-varsity", "name": "JF Varsity Jacket", "price": 1299, "category": "Outerwear", "badge": "STATEMENT", "desc": "The statement layer of the collection. Black-and-white varsity styling with JF graphics.", "colors": ["Black / White"], "sizes": ["S", "M", "L", "XL", "2XL"], "prices": {"S": 1299, "M": 1299, "L": 1299, "XL": 1399, "2XL": 1499}, "images": [{"src": "assets/varsity-front.jpg", "color": "Black / White"}, {"src": "assets/varsity-back.jpg", "color": "Black / White"}]}, {"id": "jf-beanie", "name": "JF Forged Beanie", "price": 399, "category": "Accessories", "badge": "ESSENTIAL", "desc": "Ribbed black beanie finished with the JF FORGES mark.", "colors": ["Black"], "sizes": ["One Size"], "prices": {"One Size": 399}, "images": [{"src": "assets/black-beanie-front.png", "color": "Black"}, {"src": "assets/black-beanie-back.png", "color": "Black"}]}, {"id": "jf-tote", "name": "JF Everyday Tote", "price": 349, "category": "Accessories", "badge": "ESSENTIAL", "desc": "A simple everyday carry with the JF FORGES graphic.", "colors": ["White / White Handle", "White / Black Handle"], "sizes": ["One Size"], "prices": {"One Size": 349}, "images": [{"src": "assets/white-tote-white-handles.png", "color": "White / White Handle"}, {"src": "assets/white-tote-black-handles.png", "color": "White / Black Handle"}]}];
-let products=JSON.parse(localStorage.getItem("jf_products_v3")||"null")||DEFAULT_PRODUCTS;
-let cart=JSON.parse(localStorage.getItem("jf_cart_v3")||"[]");
-let settings=JSON.parse(localStorage.getItem("jf_settings_v3")||"null")||{title:"JF ESSENTIALS",wa:"",email:""};
+let products=DEFAULT_PRODUCTS.map(p=>JSON.parse(JSON.stringify(p)));
+let cart=JSON.parse(localStorage.getItem("jf_cart_v3_last")||"[]");
+let settings={title:"JF ESSENTIALS",wa:"",email:""};
 let activeCategory="ALL",selectedProduct=null,selectedColor=null,selectedSize=null,currentImage=0;
 
 const $=id=>document.getElementById(id);
 const money=n=>"R"+Number(n||0).toLocaleString("en-ZA");
 const toast=m=>{const e=$("toast");if(!e)return;e.textContent=m;e.classList.add("show");clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove("show"),2200)};
-const saveLocal=()=>{localStorage.setItem("jf_products_v3",JSON.stringify(products));localStorage.setItem("jf_cart_v3",JSON.stringify(cart));localStorage.setItem("jf_settings_v3",JSON.stringify(settings))};
+const saveLocal=()=>{localStorage.setItem("jf_cart_v3_last",JSON.stringify(cart))};
 
 async function loadCloud(){
   if(!db)return;
@@ -93,7 +93,7 @@ function renderProducts(){
   $("products").innerHTML=list.map(p=>{
     const first=imageList(p,(p.colors||["Default"])[0])[0]||"assets/black-tee.jpg";
     const from=p.sizes?.length?Math.min(...p.sizes.map(s=>Number(p.prices?.[s]??p.price??0))):Number(p.price||0);
-    return `<article class="product"><div class="product-img"><span class="badge">${p.badge||"JF"}</span><img src="${first}" alt="${p.name}" loading="lazy"></div><div class="product-info"><div class="meta"><div><h3>${p.name}</h3><div class="price">From ${money(from)}</div></div></div><p>${p.desc||""}</p><button class="product-btn" onclick='openProduct(${JSON.stringify(p.id)})'>VIEW PIECE →</button></div></article>`;
+    return `<article class="product"><div class="product-img"><span class="badge">${p.badge||"JF"}</span><img src="${first}" alt="${p.name}" loading="lazy"></div><div class="product-info"><div class="meta"><div><h3>${p.name}</h3><div class="price">From ${money(from)}</div></div></div><p>${p.desc||p.description||""}</p><button class="product-btn" onclick='openProduct(${JSON.stringify(p.id)})'>VIEW PIECE →</button></div></article>`;
   }).join("");
 }
 
