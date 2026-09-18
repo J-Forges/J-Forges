@@ -1,4 +1,4 @@
 window.JF_SUPABASE = {
-  url: "",
-  anonKey: ""
+  url: "adminEmail",
+  anonKey: "adminPassword"
 };
